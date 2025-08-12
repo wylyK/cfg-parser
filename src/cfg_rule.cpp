@@ -1,4 +1,4 @@
-#include "rule.hpp"
+#include "cfg_rule.hpp"
 #include "cfg_helpers.hpp"
 
 #include <utility>

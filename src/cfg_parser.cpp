@@ -121,8 +121,12 @@ bool CfgParser::parse(const string& name, const string& word) {
     if (word.empty()) return normalized_grammar.contains({});
 
     if (word.size() == 1) {
+        // Find terminal in normalized_grammar equal to word.front()
+
+        // This is more efficient than iterating through normalized_grammar.terminals()
+        // because Cfg::Impl::terminals() might involks Cfg::Impl::reset_members()
         for (const auto& rule : normalized_grammar.rules()) {
-            if (rule.size() > 1) return false;
+            if (rule.size() > 1) return false; // if rule isn't a single terminal
             if (as_terminal(rule.front()) == word.front())
                 return true;
         }

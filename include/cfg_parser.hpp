@@ -1,7 +1,7 @@
 #pragma once
 
 #include "cfg.hpp"
-#include "rule.hpp"
+#include "cfg_rule.hpp"
 
 #include <set>
 #include <map>
