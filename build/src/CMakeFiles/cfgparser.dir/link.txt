@@ -1,0 +1,2 @@
+/usr/bin/ar qc libcfgparser.a CMakeFiles/cfgparser.dir/cfg_normal_form.cpp.o CMakeFiles/cfgparser.dir/cfg_normalizer.cpp.o CMakeFiles/cfgparser.dir/cfg_parser.cpp.o CMakeFiles/cfgparser.dir/cfg_printer.cpp.o CMakeFiles/cfgparser.dir/cfg_rule.cpp.o CMakeFiles/cfgparser.dir/cfg.cpp.o
+/usr/bin/ranlib libcfgparser.a

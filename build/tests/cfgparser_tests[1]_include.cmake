@@ -1,0 +1,5 @@
+if(EXISTS "/home/willy/repos/cfg-parser/build/tests/cfgparser_tests[1]_tests.cmake")
+  include("/home/willy/repos/cfg-parser/build/tests/cfgparser_tests[1]_tests.cmake")
+else()
+  add_test(cfgparser_tests_NOT_BUILT cfgparser_tests_NOT_BUILT)
+endif()
