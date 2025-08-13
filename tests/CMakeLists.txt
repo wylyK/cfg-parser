@@ -5,15 +5,18 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(googletest)
 
-enable_testing()
-
 add_executable(cfgparser_tests
     cfg_helpers_test.cpp
 )
 
-target_link_libraries(cfgparser_tests
-    PRIVATE cfgparser
+target_include_directories(cfgparser_tests
+    PRIVATE ${PROJECT_SOURCE_DIR}/src
 )
 
-include(GoogleTest)
+target_link_libraries(cfgparser_tests
+    PRIVATE cfgparser
+    GTest::gtest_main
+)
+
+Include(GoogleTest)
 gtest_discover_tests(cfgparser_tests)

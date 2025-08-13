@@ -10,8 +10,29 @@ namespace cfg_parser {
 class CfgParser::Impl {
 
     friend CfgParser;
-    class Cnf;
-    class Normalizer;
+    
+    class Cnf {
+
+    public:
+        std::vector<Cfg::Nonterminal> owned_nonterminals;
+
+        Cnf(Impl* pimpl) : pimpl(pimpl) {}
+        ~Cnf();
+
+        void set(Cfg::Nonterminal nonterminal_to_normalize);
+        const Cfg& get();
+
+    private:
+
+        class Normalizer;
+
+        Cfg norm_form;
+        Impl* pimpl;
+        Cfg::Nonterminal nonterminal_to_normalize; 
+        bool valid = false;
+
+        void delete_owned_nonterminals();
+    };
 
     std::unordered_map<std::string, std::pair<Cfg, Cnf>> grammar_map;
     std::unordered_map<Cfg::Nonterminal, std::string> name_map;

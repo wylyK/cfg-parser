@@ -93,6 +93,8 @@ cfgparser_tests_EXTERNAL_OBJECTS =
 tests/cfgparser_tests: tests/CMakeFiles/cfgparser_tests.dir/cfg_helpers_test.cpp.o
 tests/cfgparser_tests: tests/CMakeFiles/cfgparser_tests.dir/build.make
 tests/cfgparser_tests: src/libcfgparser.a
+tests/cfgparser_tests: lib/libgtest_main.a
+tests/cfgparser_tests: lib/libgtest.a
 tests/cfgparser_tests: tests/CMakeFiles/cfgparser_tests.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/willy/repos/cfg-parser/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable cfgparser_tests"
 	cd /home/willy/repos/cfg-parser/build/tests && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/cfgparser_tests.dir/link.txt --verbose=$(VERBOSE)

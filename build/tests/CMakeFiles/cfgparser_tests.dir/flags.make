@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/willy/repos/cfg-parser/include
+CXX_INCLUDES = -I/home/willy/repos/cfg-parser/src -I/home/willy/repos/cfg-parser/include -isystem /home/willy/repos/cfg-parser/build/_deps/googletest-src/googletest/include -isystem /home/willy/repos/cfg-parser/build/_deps/googletest-src/googletest
 
 CXX_FLAGS = -std=gnu++17
 

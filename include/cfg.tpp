@@ -14,7 +14,7 @@ class Cfg::Traverser {
 public:
     Traverser(const NonterminalVisitor& visitor) : visit(visitor) {}
 
-    bool already_found(const Cfg::Nonterminal nonterminal) const {
+    bool already_found(const Cfg::Nonterminal nonterminal) {
         return !found.insert(nonterminal).second;
     }
 

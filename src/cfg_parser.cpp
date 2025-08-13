@@ -1,5 +1,4 @@
-#include "cfg_parser.hpp"
-#include "cfg_normal_form.hpp"
+#include "cfg_parser_impl.hpp"
 #include "cfg_printer.hpp"
 #include "cfg_helpers.hpp"
 
@@ -56,7 +55,7 @@ void CfgParser::create(
     }
 
     const auto [it, _] = pimpl->grammar_map.emplace(
-        name, pair<Cfg, Impl::Cnf>{ rules, Impl::Cnf{ pimpl.get() } }
+        name, pair<Cfg, Impl::Cnf>{ rules, Impl::Cnf(pimpl.get()) }
     );
 
     auto& [grammar, norm_grammar] = it->second;
@@ -80,14 +79,15 @@ bool CfgParser::insert(const string& name, const Cfg::Rule& rule) {
             "Grammar cannot contain foreign nonterminals."
         );
     }
-    return pimpl->grammar_map[name].first.insert(rule);
+    
+    return pimpl->grammar_map.at(name).first.insert(rule);
 }
 
 size_t CfgParser::erase(const string& name, const Cfg::Rule& rule) {
     if (!pimpl->grammar_map.count(name))
         throw invalid_argument(name + " doesn't exist.");
 
-    return pimpl->grammar_map[name].first.erase(rule);
+    return pimpl->grammar_map.at(name).first.erase(rule);
 }
 
 void CfgParser::print(const string& name) {
@@ -98,7 +98,7 @@ void CfgParser::print(const string& name) {
         pimpl->name_map,
         { '[', ']' }
     );
-    printer(&pimpl->grammar_map[name].first);
+    printer(&pimpl->grammar_map.at(name).first);
 }
 
 void CfgParser::print_norm(const string& name) {
@@ -109,14 +109,14 @@ void CfgParser::print_norm(const string& name) {
         pimpl->name_map_for_norm,
         { '{', '}' }
     );
-    printer(&pimpl->grammar_map[name].second.get());
+    printer(&pimpl->grammar_map.at(name).second.get());
 }
 
 bool CfgParser::parse(const string& name, const string& word) {
     if (!pimpl->grammar_map.count(name))
         throw invalid_argument(name + " doesn't exist.");
 
-    auto& normalized_grammar = pimpl->grammar_map[name].second.get();
+    auto& normalized_grammar = pimpl->grammar_map.at(name).second.get();
 
     if (word.empty()) return normalized_grammar.contains({});
 
@@ -126,19 +126,21 @@ bool CfgParser::parse(const string& name, const string& word) {
         // This is more efficient than iterating through normalized_grammar.terminals()
         // because Cfg::Impl::terminals() might involks Cfg::Impl::reset_members()
         for (const auto& rule : normalized_grammar.rules()) {
-            if (rule.size() > 1) return false; // if rule isn't a single terminal
+            if (rule.size() > 1) break; // if rule isn't a single terminal
             if (as_terminal(rule.front()) == word.front())
                 return true;
         }
+        
+        return false;
     }
 
     for (size_t left_len = 1; left_len < word.size(); left_len++) {
-        if (
-            parse(name, word.substr(0, left_len)) &&
+        if (parse(name, word.substr(0, left_len)) &&
             parse(name, word.substr(left_len))
-        )
-            return true;
+        ) return true;
     }
+
+    return false;
 }
 
 void CfgParser::parse_file(const string& name, const string& file_name) {

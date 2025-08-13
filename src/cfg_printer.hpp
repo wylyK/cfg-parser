@@ -11,7 +11,7 @@ class CfgPrinter {
 protected:
     std::unordered_map<Cfg::Nonterminal, std::string>& name_map;
     
-    virtual void print_rule(const Cfg::Rule& rule, int padding = 0);
+    virtual void print_rule(const Cfg::Rule& rule, int padding);
     virtual void print_shallow(Cfg::Nonterminal nonterminal);
 
 public:

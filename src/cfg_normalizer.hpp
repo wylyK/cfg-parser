@@ -4,7 +4,7 @@
 
 namespace cfg_parser {
 
-class CfgParser::Impl::Normalizer {
+class CfgParser::Impl::Cnf::Normalizer {
 
 public:
     Normalizer(Cnf& norm);
@@ -17,7 +17,7 @@ private:
 
     using  NonterminalPair = std::pair<Cfg::Nonterminal, Cfg::Nonterminal>;
     struct NonterminalPairHash {
-        size_t operator()(const NonterminalPair& pair) const;
+        size_t operator()(const NonterminalPair& p) const;
     };
     std::unordered_map<
         NonterminalPair,

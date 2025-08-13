@@ -1,4 +1,3 @@
-#include "cfg_normal_form.hpp"
 #include "cfg_normalizer.hpp"
 
 #include <stdexcept>

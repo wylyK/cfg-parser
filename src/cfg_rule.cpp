@@ -180,3 +180,5 @@ bool operator<=(
 ) {
     return (rule_lhs < rule_rhs) || (rule_lhs == rule_rhs);
 }
+
+}

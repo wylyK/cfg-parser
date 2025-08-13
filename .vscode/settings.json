@@ -1,5 +1,5 @@
 {
-    "editor.fontFamily": "Fire Code",
+    "editor.fontFamily": "Fira Code",
     "editor.fontLigatures": true,
     "files.associations": {
         "any": "cpp",

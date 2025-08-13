@@ -1,6 +1,6 @@
 #include "cfg.hpp"
+#include "cfg_rule.hpp"
 #include "cfg_helpers.hpp"
-#include "rule.hpp"
 
 #include <map>
 #include <queue>
@@ -70,6 +70,8 @@ void Cfg::Impl::reset_members() {
     }
 }
 
+Cfg::Cfg() = default;
+
 // Cfg Constructor
 Cfg::Cfg(std::initializer_list<Rule> rules) {
     pimpl = std::make_unique<Impl>(this);
@@ -90,6 +92,8 @@ Cfg::Cfg(const Cfg& other_grammar) {
     pimpl->rules = other_grammar.pimpl->rules;
     pimpl->needs_reset = true;
 }
+
+Cfg::~Cfg() = default;
 
 Cfg& Cfg::operator=(const Cfg& grammar) {
     *this = Cfg(grammar);

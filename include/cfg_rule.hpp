@@ -63,7 +63,7 @@ public:
             symbols_.end(),
             predicate
         );
-        symbols.erase(new_end, symbols_.end());
+        symbols_.erase(new_end, symbols_.end());
         return old_size - size();
     }
 

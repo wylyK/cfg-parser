@@ -1,4 +1,3 @@
-#include "cfg_normal_form.hpp"
 #include "cfg_normalizer.hpp"
 #include "cfg_helpers.hpp"
 
@@ -6,21 +5,20 @@
 #include <utility>
 #include <stdexcept>
 
-using std::unordered_map;
-using std::set;
 using std::vector;
 using std::string;
 using std::pair;
 
 using namespace cfg_parser;
 
-CfgParser::Impl::Normalizer::Normalizer(Cnf& norm)
+CfgParser::Impl::Cnf::Normalizer::
+Normalizer(Cnf& norm)
     : norm(norm)
 {
-    mut_copy.emplace(norm.nonterminal_to_normalize, new Cfg{});
+    mut_copy.emplace(norm.nonterminal_to_normalize, new Cfg());
 }
 
-void CfgParser::Impl::Normalizer::
+void CfgParser::Impl::Cnf::Normalizer::
 verify_no_reachable_empty_nonterminals() {
     norm.nonterminal_to_normalize->Dfs(
         [&](Cfg::Nonterminal nonterminal) {
@@ -30,7 +28,7 @@ verify_no_reachable_empty_nonterminals() {
     );
 }
 
-Cfg::Rule CfgParser::Impl::Normalizer::
+Cfg::Rule CfgParser::Impl::Cnf::Normalizer::
 nonterminals_replaced_w_copy(const Cfg::Rule& rule) {
     Cfg::Rule resultant_rule;
     for (const auto& symbol : rule) {
@@ -40,10 +38,10 @@ nonterminals_replaced_w_copy(const Cfg::Rule& rule) {
     return resultant_rule;
 }
     
-void CfgParser::Impl::Normalizer::
+void CfgParser::Impl::Cnf::Normalizer::
 create_copy(Cfg::Nonterminal curr) {
     for (const auto next : curr->nonterminals()) {
-        mut_copy.emplace(next, Cfg{});
+        mut_copy.emplace(next, new Cfg());
     }
 
     // Assume mut_copy[curr] exists
@@ -52,7 +50,7 @@ create_copy(Cfg::Nonterminal curr) {
     }
 }
 
-void CfgParser::Impl::Normalizer::
+void CfgParser::Impl::Cnf::Normalizer::
 create_deep_copy() {
     norm.nonterminal_to_normalize->Dfs(
         [this](Cfg::Nonterminal nonterminal) {
@@ -61,7 +59,7 @@ create_deep_copy() {
     );
 }
 
-vector<Cfg*> CfgParser::Impl::Normalizer::
+vector<Cfg*> CfgParser::Impl::Cnf::Normalizer::
 get_nonterminals_w_empty_rule() {
     vector<Cfg*> result;
     for (auto [_, copy_nonterminal] : mut_copy) {
@@ -108,7 +106,7 @@ void insert_nonempty_pruned_rules(
     }
 }
 
-void CfgParser::Impl::Normalizer::
+void CfgParser::Impl::Cnf::Normalizer::
 replace_reachable_empty_rules() {
     vector<Cfg*> nonterminals_w_empty_rule;
     vector<Cfg::Nonterminal> nonterminals_w_erased_empty_rule;
@@ -135,7 +133,7 @@ replace_reachable_empty_rules() {
     }
 }
 
-void CfgParser::Impl::Normalizer::
+void CfgParser::Impl::Cnf::Normalizer::
 replace_unit_rules(Cfg::Nonterminal curr) {
     auto& copy_grammar = *mut_copy[curr];
 
@@ -143,7 +141,7 @@ replace_unit_rules(Cfg::Nonterminal curr) {
     std::unordered_set<Cfg::Nonterminal> nonterminals_to_keep_out;
     nonterminals_to_keep_out.insert(&copy_grammar);
 
-    set<Cfg::Rule>::iterator it;
+    std::set<Cfg::Rule>::iterator it;
 
     // Loop until no unit rules exists
     while ((it = std::find_if(
@@ -167,7 +165,7 @@ replace_unit_rules(Cfg::Nonterminal curr) {
     }
 }
 
-void CfgParser::Impl::Normalizer::
+void CfgParser::Impl::Cnf::Normalizer::
 replace_reachable_unit_rules() {
     mut_copy[norm.nonterminal_to_normalize]->Dfs_defer(
         [this](Cfg::Nonterminal nonterminal) {
@@ -176,7 +174,7 @@ replace_reachable_unit_rules() {
     );
 }
 
-Cfg::Nonterminal CfgParser::Impl::Normalizer::
+Cfg::Nonterminal CfgParser::Impl::Cnf::Normalizer::
 get_singleton_nonterminal(Cfg::Terminal terminal) {
     const auto [it, inserted] = norm.pimpl->singleton_map.emplace(
         string(1, terminal),
@@ -196,34 +194,34 @@ get_singleton_nonterminal(Cfg::Terminal terminal) {
 
 // Assume pimpl->singleton_map[terminal_str[:n-1]] exists,
 // where terminal_str[:n-1] is the result of terminal_str.pop_back()
-Cfg::Nonterminal CfgParser::Impl::Normalizer::
+Cfg::Nonterminal CfgParser::Impl::Cnf::Normalizer::
 get_singleton_nonterminal(string terminal_str) {
-    auto it = norm.pimpl->singleton_map.find(terminal_str);
+    const auto it = norm.pimpl->singleton_map.find(terminal_str);
     
     if (it != norm.pimpl->singleton_map.end()) return &it->second;
 
     Cfg::Nonterminal front_nonterminal = get_singleton_nonterminal(terminal_str.substr(0, terminal_str.size() - 1));
     Cfg::Nonterminal  back_nonterminal = get_singleton_nonterminal(terminal_str.back());
 
-    const auto [it, _] = norm.pimpl->singleton_map.emplace(
+    const auto [new_it, _] = norm.pimpl->singleton_map.emplace(
         terminal_str,
         Cfg{ { front_nonterminal, back_nonterminal } }
     );
 
-    norm.pimpl->name_map_for_norm.emplace(&it->second, terminal_str);
+    norm.pimpl->name_map_for_norm.emplace(&new_it->second, terminal_str);
 
-    return &it->second;
+    return &new_it->second;
 }
 
-size_t CfgParser::Impl::Normalizer::NonterminalPairHash::
-operator()(const NonterminalPair& pair) const {
-    return std::hash<Cfg::Nonterminal>()(pair.first) ^
-           std::hash<Cfg::Nonterminal>()(pair.second);
+size_t CfgParser::Impl::Cnf::Normalizer::NonterminalPairHash::
+operator()(const NonterminalPair& p) const {
+    return std::hash<Cfg::Nonterminal>()(p.first) ^
+           std::hash<Cfg::Nonterminal>()(p.second);
 }
 
 // Assuming rule.size() >= 3,
 // returns an equivalent copy of rule with .size() == 2
-Cfg::Rule CfgParser::Impl::Normalizer::
+Cfg::Rule CfgParser::Impl::Cnf::Normalizer::
 nonterminal_pair_equiv_of(const Cfg::Rule& rule) {
     Cfg::Rule result;
     string terminal_str;
@@ -254,7 +252,7 @@ nonterminal_pair_equiv_of(const Cfg::Rule& rule) {
     return { prev, result.back() };
 }
     
-void CfgParser::Impl::Normalizer::
+void CfgParser::Impl::Cnf::Normalizer::
 convert_reachable_rules_into_pairs() {
     for (auto [_, copy_nonterminal] : mut_copy) {
         vector<pair<Cfg::Rule, Cfg::Rule>> rules_to_convert;
@@ -269,7 +267,7 @@ convert_reachable_rules_into_pairs() {
     }
 }
 
-void CfgParser::Impl::Normalizer::
+void CfgParser::Impl::Cnf::Normalizer::
 transfer_ownership_of_nonterminals() {
     unsigned serial = 1;
 
@@ -296,7 +294,7 @@ transfer_ownership_of_nonterminals() {
     }
 }
 
-void CfgParser::Impl::Normalizer::
+void CfgParser::Impl::Cnf::Normalizer::
 set_norm_form() {
     if (norm.nonterminal_to_normalize->contains({})) {
         norm.norm_form.insert({});
@@ -306,7 +304,7 @@ set_norm_form() {
         norm.norm_form.insert(rule);
 }
 
-void CfgParser::Impl::Normalizer::
+void CfgParser::Impl::Cnf::Normalizer::
 normalize() {
     verify_no_reachable_empty_nonterminals();
     create_deep_copy();

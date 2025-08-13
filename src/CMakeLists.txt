@@ -7,4 +7,6 @@ add_library(cfgparser
     cfg.cpp
 )
 
-target_include_directories(cfgparser PUBLIC ${PROJECT_SOURCE_DIR}/include)
+target_include_directories(cfgparser
+    PUBLIC ${PROJECT_SOURCE_DIR}/include
+)

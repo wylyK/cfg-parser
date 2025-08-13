@@ -18,9 +18,10 @@ public:
     
     class Rule;
 
-    Cfg() = default;
+    Cfg();
     Cfg(std::initializer_list<Rule> rules);
     Cfg(const Cfg& other_grammar);
+    ~Cfg();
 
     Cfg& operator=(const Cfg& other_grammar);
     Cfg& operator+=(const Cfg& grammar);
