@@ -1,5 +1,0 @@
-CfgHelpersTest.ChecksTerminals 1 0.00505693
-CfgHelpersTest.ChecksNonterminals 1 0.00361028
-CfgHelpersTest.GetsTerminals 1 0.00241975
-CfgHelpersTest.GetsNonterminals 1 0.00226436
----

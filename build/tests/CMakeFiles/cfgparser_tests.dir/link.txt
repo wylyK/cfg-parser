@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/cfgparser_tests.dir/cfg_helpers_test.cpp.o -o cfgparser_tests  ../src/libcfgparser.a ../lib/libgtest_main.a ../lib/libgtest.a 
