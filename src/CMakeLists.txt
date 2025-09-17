@@ -1,12 +1,11 @@
-add_library(cfgparser
-    cfg_normal_form.cpp
-    cfg_normalizer.cpp
-    cfg_parser.cpp
-    cfg_printer.cpp
-    cfg_rule.cpp
-    cfg.cpp
+add_library(cfg_parser
+    grammar.cpp
+    parser_impl_normalizer.cpp
+    parser_impl.cpp
+    parser.cpp
+    prod_rule.cpp
 )
 
-target_include_directories(cfgparser
-    PUBLIC ${PROJECT_SOURCE_DIR}/include
+target_include_directories(cfg_parser
+    PUBLIC ${PROJECT_SOURCE_DIR}/include/cfg-parser
 )

@@ -5,18 +5,22 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(googletest)
 
-add_executable(cfgparser_tests
-    cfg_helpers_test.cpp
+add_executable(cfg_parser_tests
+    symbol_test.cpp
+    prod_rule_test.cpp
+    grammar_test.cpp
+    grammar_traverser_test.cpp
+    parser_test.cpp;
 )
 
-target_include_directories(cfgparser_tests
+target_include_directories(cfg_parser_tests
     PRIVATE ${PROJECT_SOURCE_DIR}/src
 )
 
-target_link_libraries(cfgparser_tests
-    PRIVATE cfgparser
+target_link_libraries(cfg_parser_tests
+    PRIVATE cfg_parser
     GTest::gtest_main
 )
 
 Include(GoogleTest)
-gtest_discover_tests(cfgparser_tests)
+gtest_discover_tests(cfg_parser_tests)
